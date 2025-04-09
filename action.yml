@@ -1,23 +1,100 @@
-name: Rename me
+name: Secure Dockle
 description: |
-  Template repository for creating Composite Action with GitHub Actions.
+  This action securely runs Dockle in a Docker container to lint container images.
+  It helps enforce [Dockerfile Best Practices][best_practices] and checks compliance with [CIS Benchmarks][cis].
+
+  This action reduces security risks associated with software supply chain attacks, such as compromised third-party repositories or tampered container images.
+  To achieve this, it enforces strict container isolation, disables network connections, and drops unnecessary privileges.
 
   ## Usage
 
-  Write usage for your Composite Action.
-
   ```yaml
     steps:
-      - name: Template
-        uses: tmknom/template-composite-action@v0
+      - name: Secure Dockle
+        uses: tmknom/secure-dockle-action@v0
   ```
+
+inputs:
+  dockerfile-path:
+    default: ./Dockerfile
+    required: false
+    description: The path to the Dockerfile for security linting.
 
 runs:
   using: composite
 
   steps:
-    - name: Run
+    - name: Install
+      id: install
+      env:
+        IMAGE_REPOSITORY: goodwithtech/dockle
+        IMAGE_DIGEST: sha256:eade932f793742de0aa8755406c7677cd7696f8675b6180926f7eeffa7abe6b9 # 0.4.15
       run: |
+        echo "::group::Install"
         set -x
-        echo "Write steps"
+        image="${IMAGE_REPOSITORY}@${IMAGE_DIGEST}"
+        echo "image=${image}" >> "${GITHUB_OUTPUT}"
+        docker pull "${image}"
+      shell: bash
+
+    - name: Show version
+      env:
+        IMAGE: ${{ steps.install.outputs.image }}
+      run: |
+        echo "::group::Show version"
+        set -x
+        docker run --interactive --rm --read-only --user 1111:1111 \
+          --security-opt no-new-privileges --cap-drop all --network none \
+          "${IMAGE}" --version
+        echo "::endgroup::"
+      shell: bash
+
+    - name: Build image
+      id: build
+      env:
+        DOCKERFILE_PATH: ${{ inputs.dockerfile-path }}
+      run: |
+        echo "::group::Build image"
+        set -x
+        identifier="$(date '+%s')"
+        image="pseudo-image:${identifier}"
+        tarball="${RUNNER_TEMP}/pseudo-image-${identifier}.tar"
+        echo "image=${image}" >> "${GITHUB_OUTPUT}"
+        echo "tarball=${tarball}" >> "${GITHUB_OUTPUT}"
+
+        context="$(dirname "${DOCKERFILE_PATH}")"
+        docker image build -t "${image}" -f "${DOCKERFILE_PATH}" "${context}"
+        docker image save "${image}" -o "${tarball}"
+        chmod a+r "${tarball}"
+        echo "::endgroup::"
+      shell: bash
+
+    - name: Lint
+      env:
+        IMAGE: ${{ steps.install.outputs.image }}
+        TARBALL: ${{ steps.build.outputs.tarball }}
+      run: |
+        echo "::group::Lint"
+        set -x
+        volume="$(dirname "${TARBALL}")"
+        declare -a flags=(--exit-code 1 --input "${TARBALL}")
+
+        docker run --interactive --rm --read-only --user 1111:1111 \
+          --security-opt no-new-privileges --cap-drop all --network none \
+          --volume "${volume}:${volume}:ro" \
+          "${IMAGE}" "${flags[@]}"
+        echo "::endgroup::"
+      shell: bash
+
+    - name: Cleanup
+      if: ${{ always() }}
+      env:
+        PSEUDO_IMAGE: ${{ steps.build.outputs.image }}
+        TARBALL: ${{ steps.build.outputs.tarball }}
+      run: |
+        echo "::group::Cleanup"
+        set -x
+        docker image rm "${PSEUDO_IMAGE}" || true
+        rm -f "${TARBALL}" || true
+        echo "::endgroup::"
       shell: bash
