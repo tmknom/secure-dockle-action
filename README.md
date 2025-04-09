@@ -1,26 +1,30 @@
-# template-composite-action
+# secure-dockle-action
 
-Template repository for Composite Action.
+Run [Dockle][dockle] in an isolated Docker container to securely lint container images.
 
 <!-- actdocs start -->
 
 ## Description
 
-Template repository for creating Composite Action with GitHub Actions.
+This action securely runs Dockle in a Docker container to lint container images.
+It helps enforce [Dockerfile Best Practices][best_practices] and checks compliance with [CIS Benchmarks][cis].
+
+This action reduces security risks associated with software supply chain attacks, such as compromised third-party repositories or tampered container images.
+To achieve this, it enforces strict container isolation, disables network connections, and drops unnecessary privileges.
 
 ## Usage
 
-Write usage for your Composite Action.
-
 ```yaml
   steps:
-    - name: Template
-      uses: tmknom/template-composite-action@v0
+    - name: Secure Dockle
+      uses: tmknom/secure-dockle-action@v0
 ```
 
 ## Inputs
 
-N/A
+| Name | Description | Default | Required |
+| :--- | :---------- | :------ | :------: |
+| dockerfile-path | The path to the Dockerfile for security linting. | `./Dockerfile` | no |
 
 ## Outputs
 
@@ -34,7 +38,79 @@ N/A
 
 ## FAQ
 
-N/A
+### What is Dockle?
+
+[Dockle][dockle] is a linter for container images.
+It detects errors, security issues, and best practice violations, helping you maintain safer and more reliable container images.
+
+### Why should I use this action instead of directly using Dockle?
+
+Running third-party tools directly in your environment may expose your repository and credentials to compromised or malicious code.
+This action significantly reduces such risks by strictly isolating the environment:
+
+- Network access is completely disabled (`--network none`)
+- All unnecessary Linux capabilities are dropped (`--cap-drop all`)
+- Privilege escalation is explicitly disabled (`--security-opt no-new-privileges`)
+- The action runs as a non-root, restricted user  (`--user 1111:1111`)
+- The filesystem is strictly read-only (`--read-only`)
+- The repository directory is mounted as read-only (`--volume "${volume}:${volume}:ro"`)
+
+### What specific security risks does this action protect against?
+
+This action specifically prevents threats related to software supply chain security (attacks targeting third-party software or tools used in workflows), such as:
+
+- Unauthorized outbound connections from runners, significantly reducing the risk of data leakage
+- Malicious updates or compromised tools exploiting elevated privileges or unrestricted network access
+
+### How does this action ensure the Docker image used for Dockle is secure?
+
+This action explicitly specifies the Docker image using its digest (SHA256).
+Using a digest ensures that exactly the intended and verified image is used every time, eliminating the risk of malicious updates or image tampering.
+
+### Are network connections permitted inside the Docker container used by this action?
+
+No. Network connections are completely disabled within the container.
+Even if the tool were compromised or contained malicious code, disabling network access effectively prevents communication with external attackers, significantly reducing the risk of data leaks.
+
+### Does this action run with elevated (root) privileges?
+
+No. The action runs as a non-root, restricted user without privilege escalation.
+
+### What value should I specify for the `dockerfile-path` input?
+
+Specify the path to your Dockerfile, relative to the repository root.
+
+```yaml
+- uses: tmknom/secure-dockle-action@v0
+  with:
+    dockerfile-path: ./path/to/Dockerfile
+```
+
+**Examples:**
+
+- `./Dockerfile` (Default)
+- `./docker/Dockerfile` (Subdirectory)
+- `./Dockerfile.dev` (Alternative name)
+
+### Can I customize the Dockle parameters?
+
+Currently, this action is intentionally designed with secure defaults and does not support custom parameters.
+If you require customization, consider creating your own fork of this action.
+
+### Why does this action build the Docker image every time?
+
+This action builds the image from scratch each time to ensure a clean, reproducible, and secure environment for linting.
+While this slightly increases build time, it prevents reuse of potentially compromised cached layers.
+
+### Does using this action significantly impact my CI/CD performance?
+
+No. The impact is minimal, primarily due to the overhead of pulling and executing a small Docker container.
+Typically, this added overhead is negligible, and the security improvements provided by the action justify its use.
+
+### Can I run this action without Docker?
+
+No. This action strictly requires Docker to be installed on your GitHub Actions runner.
+Without Docker, the action will fail to execute, as it relies on Docker’s isolation mechanisms to run securely.
 
 ## Related projects
 
@@ -44,4 +120,7 @@ N/A
 
 See [GitHub Releases][releases].
 
-[releases]: https://github.com/tmknom/template-composite-action/releases
+[dockle]: https://github.com/goodwithtech/dockle
+[best_practices]: https://docs.docker.com/develop/develop-images/dockerfile_best-practices/
+[cis]: https://www.cisecurity.org/cis-benchmarks/
+[releases]: https://github.com/tmknom/secure-dockle-action/releases
