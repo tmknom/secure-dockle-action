@@ -28,11 +28,15 @@ jobs:
       - name: Setup
         run: |
           set -x
-          echo "Setup"
+          cat <<EOF > "Dockerfile"
+          FROM alpine:latest
+          USER nonroot
+          EOF
 
       - name: Exercise
         id: exercise
         uses: ./
+        continue-on-error: true
 
       - name: Verify
         env:
@@ -41,8 +45,34 @@ jobs:
           set -x
           test "${OUTCOME}" = "success"
 
-      - name: Teardown
-        if: ${{ always() }}
+  test-error:
+    name: Test error
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: tmknom/checkout-action@v1
+
+      - name: Setup
         run: |
           set -x
-          echo "Teardown"
+          cat <<EOF > ".github/Dockerfile"
+          FROM alpine:latest
+          RUN apk add nginx
+          EOF
+
+      - name: Exercise
+        id: exercise
+        uses: ./
+        with:
+          dockerfile-path: .github/Dockerfile
+        continue-on-error: true
+
+      - name: Verify
+        env:
+          OUTCOME: ${{ steps.exercise.outcome }}
+        run: |
+          set -x
+          test "${OUTCOME}" = "failure"
