@@ -108,3 +108,35 @@ jobs:
         run: |
           set -x
           test "${OUTCOME}" = "success"
+
+  test-exit-level:
+    name: Test exit-level
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: tmknom/checkout-action@v1
+
+      - name: Setup
+        run: |
+          set -x
+          cat <<EOF > "./Dockerfile"
+          FROM alpine:latest
+          USER nonroot
+          EOF
+
+      - name: Exercise
+        id: exercise
+        uses: ./
+        with:
+          exit-level: info
+        continue-on-error: true
+
+      - name: Verify
+        env:
+          OUTCOME: ${{ steps.exercise.outcome }}
+        run: |
+          set -x
+          test "${OUTCOME}" = "failure"
