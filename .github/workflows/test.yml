@@ -76,3 +76,35 @@ jobs:
         run: |
           set -x
           test "${OUTCOME}" = "failure"
+
+  test-ignore:
+    name: Test ignore
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: tmknom/checkout-action@v1
+
+      - name: Setup
+        run: |
+          set -x
+          cat <<EOF > "./Dockerfile"
+          FROM alpine:latest
+          RUN apk add nginx
+          EOF
+
+      - name: Exercise
+        id: exercise
+        uses: ./
+        with:
+          ignore: CIS-DI-0001 DKL-DI-0004
+        continue-on-error: true
+
+      - name: Verify
+        env:
+          OUTCOME: ${{ steps.exercise.outcome }}
+        run: |
+          set -x
+          test "${OUTCOME}" = "success"
