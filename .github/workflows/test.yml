@@ -58,7 +58,7 @@ jobs:
       - name: Setup
         run: |
           set -x
-          cat <<EOF > ".github/Dockerfile"
+          cat <<EOF > ".github/Dockerfile.dev"
           FROM alpine:latest
           RUN apk add nginx
           EOF
@@ -67,7 +67,7 @@ jobs:
         id: exercise
         uses: ./
         with:
-          dockerfile-path: .github/Dockerfile
+          dockerfile-path: .github/Dockerfile.dev
         continue-on-error: true
 
       - name: Verify
