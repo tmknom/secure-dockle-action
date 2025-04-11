@@ -31,6 +31,7 @@ To achieve this, it enforces strict container isolation, disables network connec
       with:
         dockerfile-path: ./subdir/Dockerfile.dev
         ignore: CIS-DI-0005 CIS-DI-0006
+        exit-level: info
 ```
 
 ## Inputs
