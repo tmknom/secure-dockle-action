@@ -3,7 +3,7 @@ description: |
   This action securely runs Dockle in a Docker container to lint container images.
   It helps enforce [Dockerfile Best Practices][best_practices] and checks compliance with [CIS Benchmarks][cis].
 
-  This action reduces security risks associated with software supply chain attacks, such as compromised third-party repositories or tampered container images.
+  This action reduces security risks associated with software supply chain attacks, such as compromised third-party tools or tampered container images.
   To achieve this, it enforces strict container isolation, disables network connections, and drops unnecessary privileges.
 
   ## Usage
