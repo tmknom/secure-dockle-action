@@ -35,6 +35,10 @@ inputs:
   ignore:
     required: false
     description: Space-separated list of Dockle checkpoint codes to ignore.
+  exit-level:
+    default: warn
+    required: false
+    description: Severity level (`fatal`, `warn`, or `info`) at which violations cause the action to fail.
 
 runs:
   using: composite
@@ -90,11 +94,12 @@ runs:
         IMAGE: ${{ steps.install.outputs.image }}
         TARBALL: ${{ steps.build.outputs.tarball }}
         IGNORE: ${{ inputs.ignore }}
+        EXIT_LEVEL: ${{ inputs.exit-level }}
       run: |
         echo "::group::Lint"
         set -x
         volume="$(dirname "${TARBALL}")"
-        declare -a flags=(--exit-code 1 --input "${TARBALL}")
+        declare -a flags=(--exit-code 1 --exit-level "${EXIT_LEVEL}" --input "${TARBALL}")
 
         if [[ "${IGNORE}" != "" ]]; then
           IFS=$' ' read -ra codes <<< "${IGNORE}"
