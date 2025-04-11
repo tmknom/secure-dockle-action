@@ -25,6 +25,7 @@ To achieve this, it enforces strict container isolation, disables network connec
 | Name | Description | Default | Required |
 | :--- | :---------- | :------ | :------: |
 | dockerfile-path | The path to the Dockerfile for security linting. | `./Dockerfile` | no |
+| ignore | Space-separated list of Dockle checkpoint codes to ignore. | n/a | no |
 
 ## Outputs
 

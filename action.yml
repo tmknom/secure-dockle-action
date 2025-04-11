@@ -19,6 +19,9 @@ inputs:
     default: ./Dockerfile
     required: false
     description: The path to the Dockerfile for security linting.
+  ignore:
+    required: false
+    description: Space-separated list of Dockle checkpoint codes to ignore.
 
 runs:
   using: composite
@@ -73,11 +76,19 @@ runs:
       env:
         IMAGE: ${{ steps.install.outputs.image }}
         TARBALL: ${{ steps.build.outputs.tarball }}
+        IGNORE: ${{ inputs.ignore }}
       run: |
         echo "::group::Lint"
         set -x
         volume="$(dirname "${TARBALL}")"
         declare -a flags=(--exit-code 1 --input "${TARBALL}")
+
+        if [[ "${IGNORE}" != "" ]]; then
+          IFS=$' ' read -ra codes <<< "${IGNORE}"
+          for code in "${codes[@]}"; do
+            flags+=("--ignore" "${code}")
+          done
+        fi
 
         docker run --interactive --rm --read-only --user 1111:1111 \
           --security-opt no-new-privileges --cap-drop all --network none \
