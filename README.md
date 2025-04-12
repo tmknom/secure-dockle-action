@@ -110,8 +110,11 @@ Specify the path to your Dockerfile, relative to the repository root.
 
 ### Can I customize the Dockle parameters?
 
-Currently, this action is intentionally designed with secure defaults and does not support custom parameters.
-If you require customization, consider creating your own fork of this action.
+Yes. You can customize Dockle parameters through the inputs described in the [Inputs](#inputs) section.
+See [Custom Usage](#usage) for an example.
+
+This action intentionally limits arbitrary customization to ensure secure, isolated, and predictable execution.
+If you require further customization, consider creating your own fork of this action.
 
 ### Why does this action build the Docker image every time?
 
