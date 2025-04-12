@@ -19,7 +19,7 @@ To achieve this, it enforces strict container isolation, disables network connec
 ```yaml
   steps:
     - name: Secure Dockle
-      uses: tmknom/secure-dockle-action@v0
+      uses: tmknom/secure-dockle-action@de64904abbaee35da28dd45cfa7a31e084347ed3 # v0.2.0
 ```
 
 ### Custom
@@ -27,7 +27,7 @@ To achieve this, it enforces strict container isolation, disables network connec
 ```yaml
   steps:
     - name: Secure Dockle
-      uses: tmknom/secure-dockle-action@v0
+      uses: tmknom/secure-dockle-action@de64904abbaee35da28dd45cfa7a31e084347ed3 # v0.2.0
       with:
         dockerfile-path: ./subdir/Dockerfile.dev
         ignore: CIS-DI-0005 CIS-DI-0006
