@@ -116,6 +116,10 @@ Doing so ensures the immutability of both the action’s code and any resources 
 Yes. You can customize Dockle parameters through the inputs described in the [Inputs](#inputs) section.
 See [Custom Usage](#usage) for an example.
 
+For more details on configuring Dockle, refer to the official documentation:
+
+- `ignore` input: [Dockle Checkpoint Details](https://github.com/goodwithtech/dockle/blob/master/CHECKPOINT.md)
+
 This action intentionally limits arbitrary customization to ensure secure, isolated, and predictable execution.
 If you require further customization, consider creating your own fork of this action.
 
