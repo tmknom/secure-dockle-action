@@ -92,6 +92,26 @@ Even if the tool were compromised or contained malicious code, disabling network
 
 No. The action runs as a non-root, restricted user without privilege escalation.
 
+
+### Should I pin this action using a commit SHA?
+
+**Yes, strongly recommended.**
+
+To further protect your workflows from unintended or malicious modifications, it's a best practice to pin the action to a specific commit SHA (commit hash).
+Doing so ensures the immutability of both the action’s code and any resources it references, such as Docker images, further reducing the risk of software supply chain attacks.
+
+**Recommended (more secure):**
+
+```yaml
+- uses: tmknom/secure-dockle-action@de64904abbaee35da28dd45cfa7a31e084347ed3 # v0.2.0
+```
+
+**Not recommended:**
+
+```yaml
+- uses: tmknom/secure-dockle-action@v0
+```
+
 ### What value should I specify for the `dockerfile-path` input?
 
 Specify the path to your Dockerfile, relative to the repository root.
