@@ -92,7 +92,6 @@ Even if the tool were compromised or contained malicious code, disabling network
 
 No. The action runs as a non-root, restricted user without privilege escalation.
 
-
 ### Should I pin this action using a commit SHA?
 
 **Yes, strongly recommended.**
@@ -111,22 +110,6 @@ Doing so ensures the immutability of both the action’s code and any resources 
 ```yaml
 - uses: tmknom/secure-dockle-action@v0
 ```
-
-### What value should I specify for the `dockerfile-path` input?
-
-Specify the path to your Dockerfile, relative to the repository root.
-
-```yaml
-- uses: tmknom/secure-dockle-action@v0
-  with:
-    dockerfile-path: ./path/to/Dockerfile
-```
-
-**Examples:**
-
-- `./Dockerfile` (Default)
-- `./docker/Dockerfile` (Subdirectory)
-- `./Dockerfile.dev` (Alternative name)
 
 ### Can I customize the Dockle parameters?
 
