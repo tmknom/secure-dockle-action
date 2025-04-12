@@ -36,7 +36,6 @@ jobs:
       - name: Exercise
         id: exercise
         uses: ./
-        continue-on-error: true
 
       - name: Verify
         env:
@@ -100,7 +99,6 @@ jobs:
         uses: ./
         with:
           ignore: CIS-DI-0001 DKL-DI-0004
-        continue-on-error: true
 
       - name: Verify
         env:
