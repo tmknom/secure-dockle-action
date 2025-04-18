@@ -2,8 +2,6 @@
 
 Run [Dockle][dockle] in an isolated Docker container to securely lint container images.
 
-<!-- actdocs start -->
-
 ## Description
 
 This action securely runs Dockle in a Docker container to lint container images.
@@ -34,6 +32,8 @@ To achieve this, it enforces strict container isolation, disables network connec
         exit-level: info
 ```
 
+<!-- actdocs inputs start -->
+
 ## Inputs
 
 | Name | Description | Default | Required |
@@ -42,11 +42,15 @@ To achieve this, it enforces strict container isolation, disables network connec
 | exit-level | Severity level (`fatal`, `warn`, or `info`) at which violations cause the action to fail. | `warn` | no |
 | ignore | Space-separated list of Dockle checkpoint codes to ignore. | n/a | no |
 
+<!-- actdocs inputs end -->
+
+<!-- actdocs outputs start -->
+
 ## Outputs
 
 N/A
 
-<!-- actdocs end -->
+<!-- actdocs outputs end -->
 
 ## Permissions
 
