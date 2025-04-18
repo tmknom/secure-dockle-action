@@ -124,3 +124,7 @@ runs:
         rm -f "${TARBALL}" || true
         echo "::endgroup::"
       shell: bash
+
+branding:
+  icon: check
+  color: purple
