@@ -2,28 +2,6 @@ name: Secure Dockle
 description: |
   Securely run Dockle in a Docker container to lint container images while mitigating supply chain attacks.
 
-  ## Usage
-
-  ### Default
-
-  ```yaml
-    steps:
-      - name: Secure Dockle
-        uses: tmknom/secure-dockle-action@de64904abbaee35da28dd45cfa7a31e084347ed3 # v0.2.0
-  ```
-
-  ### Custom
-
-  ```yaml
-    steps:
-      - name: Secure Dockle
-        uses: tmknom/secure-dockle-action@de64904abbaee35da28dd45cfa7a31e084347ed3 # v0.2.0
-        with:
-          dockerfile-path: ./subdir/Dockerfile.dev
-          ignore: CIS-DI-0005 CIS-DI-0006
-          exit-level: info
-  ```
-
 inputs:
   dockerfile-path:
     default: ./Dockerfile
