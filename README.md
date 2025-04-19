@@ -17,7 +17,7 @@ To achieve this, it enforces strict container isolation, disables network connec
 ```yaml
   steps:
     - name: Secure Dockle
-      uses: tmknom/secure-dockle-action@de64904abbaee35da28dd45cfa7a31e084347ed3 # v0.2.0
+      uses: tmknom/secure-dockle-action@c07e7b3b7abd3b479ccd84762487ebbe78116735 # v0.2.2
 ```
 
 ### Custom
@@ -25,7 +25,7 @@ To achieve this, it enforces strict container isolation, disables network connec
 ```yaml
   steps:
     - name: Secure Dockle
-      uses: tmknom/secure-dockle-action@de64904abbaee35da28dd45cfa7a31e084347ed3 # v0.2.0
+      uses: tmknom/secure-dockle-action@c07e7b3b7abd3b479ccd84762487ebbe78116735 # v0.2.2
       with:
         dockerfile-path: ./subdir/Dockerfile.dev
         ignore: CIS-DI-0005 CIS-DI-0006
@@ -106,7 +106,7 @@ Doing so ensures the immutability of both the action’s code and any resources 
 **Recommended (more secure):**
 
 ```yaml
-- uses: tmknom/secure-dockle-action@de64904abbaee35da28dd45cfa7a31e084347ed3 # v0.2.0
+- uses: tmknom/secure-dockle-action@c07e7b3b7abd3b479ccd84762487ebbe78116735 # v0.2.2
 ```
 
 **Not recommended:**
